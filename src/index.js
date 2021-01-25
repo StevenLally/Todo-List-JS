@@ -52,7 +52,7 @@ const createProjectNodes = (projectListItems) => {
     node.addEventListener('click', () => {
       const project = projects.filter(project => {
         return project.name === node.outerText;
-      });
+      })[0];
 
       todoView.innerHTML = '';
       todoView.appendChild(renderTodos(project.todoList));
