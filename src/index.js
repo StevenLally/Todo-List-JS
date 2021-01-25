@@ -1,6 +1,7 @@
 import renderProjectList from './renderProjectList';
+import createProject from './createProject';
 
-//initial project list and local storage setup
+//initial project list for testing
 let projects = [{
   name: "Test Project", 
   todoList: [{
@@ -13,8 +14,14 @@ let projects = [{
   }]
 }];
 
+//DOM elements
 const projectListContainer = document.getElementById('projectListContainer');
+const addProjectButton = document.getElementById('addProjectButton');
+const newProjectModal = document.getElementById('newProjectModal');
+const closeProjectModal = document.getElementById('closeProjectModal');
+const newProjectForm = document.getElementById('newProjectForm');
 
+//local storage and page load setup
 function updateStorage() {
   localStorage.setItem('projects', JSON.stringify(projects));
 }
@@ -27,4 +34,31 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   projectListContainer.appendChild(renderProjectList(projects));
+})
+
+//Code for the "Add Project" modal
+addProjectButton.addEventListener("click", () => {
+  newProjectModal.style.display = "block";
+});
+
+const resetModal = () => {
+  newProjectModal.style.display = "none";
+  newProjectForm.reset();
+}
+
+closeProjectModal.addEventListener("click", () => {
+  resetModal();
+});
+
+window.addEventListener("click", (event) => {
+  if (event.target == newProjectModal) {
+    resetModal();
+  }
+})
+
+newProjectForm.addEventListener('submit', () => {
+  const projectFormElements = newProjectForm.elements;
+  projects.push(createProject(projectFormElements));
+  updateStorage();
+  resetModal();
 })
