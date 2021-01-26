@@ -18,7 +18,7 @@ let projects = [{
 
 //DOM elements
 const projectListContainer = document.getElementById('projectListContainer');
-let projectListItems = document.getElementById('projectListItems');
+let projectListItems = document.getElementById('projectListItems');  //done as a let so it can update when projects are added/removed
 const addProjectButton = document.getElementById('addProjectButton');
 const newProjectModal = document.getElementById('newProjectModal');
 const closeProjectModal = document.getElementById('closeProjectModal');
