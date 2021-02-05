@@ -1,6 +1,16 @@
-const renderTodos = (todoList) => {
+const renderTodos = (project) => {
+  const todoList = project.todoList;
+  const projectName = project.name;
+  
   const div = document.createElement('div');
   div.id = 'todoItems';
+
+  const addTodoButton = document.createElement('button');
+  addTodoButton.id = 'addTodoButton';
+  addTodoButton.dataset.project = projectName;
+  addTodoButton.innerHTML = 'Add Todo';
+
+  div.appendChild(addTodoButton);
 
   todoList.forEach(todo => {
     const todoTile = document.createElement('div');

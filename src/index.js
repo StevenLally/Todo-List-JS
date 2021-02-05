@@ -24,6 +24,10 @@ const newProjectModal = document.getElementById('newProjectModal');
 const closeProjectModal = document.getElementById('closeProjectModal');
 const newProjectForm = document.getElementById('newProjectForm');
 const todoView = document.getElementById('todoView');
+let addTodoButton;
+const newTodoModal = document.getElementById('newTodoModal');
+const closeTodoModal = document.getElementById('closeTodoModal');
+const newTodoForm = document.getElementById('newTodoForm');
 
 //local storage and page load setup
 function updateStorage() {
@@ -55,7 +59,11 @@ const createProjectNodes = (projectListItems) => {
       })[0];
 
       todoView.innerHTML = '';
-      todoView.appendChild(renderTodos(project.todoList));
+      todoView.appendChild(renderTodos(project));
+      addTodoButton = document.getElementById('addTodoButton'); //update button to be for current project
+      addTodoButton.addEventListener("click", () => {
+        newTodoModal.style.display = "block";
+      });
     })
   })
 }
@@ -65,18 +73,18 @@ addProjectButton.addEventListener("click", () => {
   newProjectModal.style.display = "block";
 });
 
-const resetModal = () => {
+const resetProjectModal = () => {
   newProjectModal.style.display = "none";
   newProjectForm.reset();
 }
 
 closeProjectModal.addEventListener("click", () => {
-  resetModal();
+  resetProjectModal();
 });
 
 window.addEventListener("click", (event) => {
   if (event.target == newProjectModal) {
-    resetModal();
+    resetProjectModal();
   }
 })
 
@@ -85,10 +93,51 @@ newProjectForm.addEventListener('submit', (event) => {
   const projectFormElements = newProjectForm.elements;
   projects.push(createProject(projectFormElements));
   updateStorage();
-  resetModal();
+  resetProjectModal();
 
   projectListContainer.innerHTML = '';
   projectListContainer.appendChild(renderProjectList(projects));
   projectListItems = document.getElementById('projectListItems');
   createProjectNodes(projectListItems);
+})
+
+//Code for "Add Todo" modal
+const resetTodoModal = () => {
+  newTodoModal.style.display = "none";
+  newTodoForm.reset();
+}
+
+closeTodoModal.addEventListener("click", () => {
+  resetTodoModal();
+});
+
+window.addEventListener("click", (event) => {
+  if (event.target == newTodoModal) {
+    resetTodoModal();
+  }
+})
+
+newTodoForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const todoFormElements = newTodoForm.elements;
+  const currentProjectName = addTodoButton.dataset.project;
+  let currentProject;
+
+  for (let i = 0; i < projects.length; i++) {
+    if (projects[i].name === currentProject) {
+      currentProject = projects[i];
+      projects[i].todoList.push(createTodo(todoFormElements, currentProjectName))
+      updateStorage();
+      break;
+    }
+  }
+  
+  resetTodoModal();
+
+  todoView.innerHTML = '';
+  todoView.appendChild(renderTodos(currentProject));
+  addTodoButton = document.getElementById('addTodoButton'); //update button to be for current project
+  addTodoButton.addEventListener("click", () => {
+    newTodoModal.style.display = "block";
+  });
 })

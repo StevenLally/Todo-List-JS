@@ -21,13 +21,13 @@
     </div>
 
     <div id="todoContainer">
-      <button id="addTodoButton">Add Todo</button>
       <div id="todoView">
         Select a Project to View
       </div>
     </div>
   </div>
 
+  <!--new project modal--> 
   <div id="newProjectModal" class="modal">
     <div class="modalContent">
       <div class="modalHeader">
@@ -38,6 +38,38 @@
         <form id="newProjectForm">
           <label for="projectName">Project Name:</label><br>
           <input type="text" id="projectName" name="projectName" required><br>
+          <input type="submit" value="Add">
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--new todo modal--> 
+  <div id="newTodoModal" class="modal">
+    <div class="modalContent">
+      <div class="modalHeader">
+        <span id="closeTodoModal" class="close">&times;</span>
+        <h3>New Todo</h3>
+      </div>
+      <div class="modalBody">
+        <form id="newTodoForm">
+          <label for="todoTitle">Title: </label><br>
+          <input type="text" id="todoTitle" name="todoTitle" required><br>
+
+          <label for="todoDescription">Description: </label><br>
+          <textarea id="todoDescription" name="todoDescription" rows="4" cols="50" required></textarea><br>
+          
+          <label for="todoPriority">Priority: </label><br>
+          <select id="todoPriority" name="todoPriority" required>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select><br>
+
+          <label for="todoDueDate">Due Date: </label><br>
+          <input type="date" id="todoDueDate" name="todoDueDate"><br>
+
           <input type="submit" value="Add">
         </form>
       </div>
