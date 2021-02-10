@@ -124,7 +124,7 @@ newTodoForm.addEventListener('submit', (event) => {
   let currentProject;
 
   for (let i = 0; i < projects.length; i++) {
-    if (projects[i].name === currentProject) {
+    if (projects[i].name === currentProjectName) {
       currentProject = projects[i];
       projects[i].todoList.push(createTodo(todoFormElements, currentProjectName))
       updateStorage();
@@ -135,7 +135,7 @@ newTodoForm.addEventListener('submit', (event) => {
   resetTodoModal();
 
   todoView.innerHTML = '';
-  todoView.appendChild(renderTodos(currentProject));
+  todoView.appendChild(renderTodos(currentProject)); //possible issue here of "currentProject" being null
   addTodoButton = document.getElementById('addTodoButton'); //update button to be for current project
   addTodoButton.addEventListener("click", () => {
     newTodoModal.style.display = "block";
