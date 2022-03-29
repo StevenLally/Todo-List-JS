@@ -1,15 +1,17 @@
-import renderProjectList from './renderProjectList';
-import renderTodos from './renderTodos';
-import createProject from './createProject';
-import createTodo from './createTodo';
+import renderProjectList from './renderProjectList.js';
+import renderTodos from './renderTodos.js';
+import createProject from './createProject.js';
+import createTodo from './createTodo.js';
+import { v4 as uuidv4 } from 'https://cdn.skypack.dev/uuid';
 
 //initial project list for testing
 let projects = [{
   name: "Test Project", 
   todoList: [{
+    id: uuidv4(),
     title: "Test Todo", 
     desc: "Test desc.",
-    project: "Parent Project",
+    project: "Test Project",
     priority: 2,
     dueDate: "due date",
     createdDate: "created date"
@@ -28,6 +30,7 @@ let addTodoButton;
 const newTodoModal = document.getElementById('newTodoModal');
 const closeTodoModal = document.getElementById('closeTodoModal');
 const newTodoForm = document.getElementById('newTodoForm');
+const viewAllTodos = document.getElementById('viewAllTodos');
 
 //local storage and page load setup
 function updateStorage() {
@@ -56,17 +59,37 @@ const createProjectNodes = (projectListItems) => {
     node.addEventListener('click', () => {
       const project = projects.filter(project => {
         return project.name === node.outerText;
-      })[0];
+      });
 
       todoView.innerHTML = '';
       todoView.appendChild(renderTodos(project));
-      addTodoButton = document.getElementById('addTodoButton'); //update button to be for current project
+      addTodoButton = document.querySelector('.addTodoButton'); //update button to be for current project
       addTodoButton.addEventListener("click", () => {
         newTodoModal.style.display = "block";
       });
     })
   })
 }
+
+//display all todos at once
+viewAllTodos.addEventListener('click', () => {
+  todoView.innerHTML = '';
+  todoView.appendChild(renderTodos(projects));
+
+  const todoNodes = document.getElementById('todoItems');
+  const addTodoButtonNodes = [...todoNodes.childNodes].filter(ele => {
+    return ele.localName == "button";
+  });
+
+  addTodoButtonNodes.forEach(node => {
+    node.addEventListener('click', () => {
+      console.log(node);
+      addTodoButton = node;
+      newTodoModal.style.display = "block";
+    })
+  })
+
+})
 
 //Code for the "Add Project" modal
 addProjectButton.addEventListener("click", () => {
@@ -123,21 +146,24 @@ newTodoForm.addEventListener('submit', (event) => {
   const currentProjectName = addTodoButton.dataset.project;
   let currentProject;
 
+  function postLoopRender() {
+    todoView.innerHTML = '';
+    todoView.appendChild(renderTodos([currentProject])); 
+    addTodoButton = document.querySelector('.addTodoButton'); 
+    addTodoButton.addEventListener("click", () => {
+      newTodoModal.style.display = "block";
+    });
+  }
+
   for (let i = 0; i < projects.length; i++) {
     if (projects[i].name === currentProjectName) {
       currentProject = projects[i];
-      projects[i].todoList.push(createTodo(todoFormElements, currentProjectName))
+      projects[i].todoList.push(createTodo(todoFormElements, currentProjectName));
       updateStorage();
+      postLoopRender();
       break;
     }
   }
   
-  resetTodoModal();
-
-  todoView.innerHTML = '';
-  todoView.appendChild(renderTodos(currentProject)); //possible issue here of "currentProject" being null
-  addTodoButton = document.getElementById('addTodoButton'); //update button to be for current project
-  addTodoButton.addEventListener("click", () => {
-    newTodoModal.style.display = "block";
-  });
+  resetTodoModal(); 
 })
