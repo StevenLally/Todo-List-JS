@@ -20,6 +20,13 @@ const renderTodos = (projects) => {
 
     div.appendChild(addTodoButton);
 
+    const deleteProjectButton = document.createElement('button');
+    deleteProjectButton.className = 'deleteProjectButton';
+    deleteProjectButton.dataset.project = projectName;
+    deleteProjectButton.innerHTML = `Delete ${projectName}`;
+
+    div.appendChild(deleteProjectButton);
+
     todoList.forEach(todo => {
       const todoTile = document.createElement('div');
       todoTile.classList.add('todoTile');
@@ -53,6 +60,13 @@ const renderTodos = (projects) => {
       todoCreatedDate.innerHTML = todo.createdDate;
       todoCreatedDate.classList.add('todoCreatedDate');
       todoTile.appendChild(todoCreatedDate);
+
+      const deleteTodo = document.createElement('button');
+      deleteTodo.className = 'deleteTodoButton';
+      deleteTodo.dataset.project = projectName;
+      deleteTodo.dataset.id = todo.id;
+      deleteTodo.innerHTML = 'Delete Todo';
+      todoTile.appendChild(deleteTodo);
 
       div.appendChild(todoTile);
     });

@@ -31,6 +31,8 @@ const newTodoModal = document.getElementById('newTodoModal');
 const closeTodoModal = document.getElementById('closeTodoModal');
 const newTodoForm = document.getElementById('newTodoForm');
 const viewAllTodos = document.getElementById('viewAllTodos');
+let currentlyViewingAll = false;
+let deleteProjectButton;
 
 //local storage and page load setup
 function updateStorage() {
@@ -49,6 +51,21 @@ document.addEventListener("DOMContentLoaded", () => {
   createProjectNodes(projectListItems);
 })
 
+//function to assign event listener to add todo buttons
+const addTodoButtonUpdate = () => {
+  const todoNodes = document.getElementById('todoItems');
+  const addTodoButtonNodes = [...todoNodes.childNodes].filter(ele => {
+    return ele.className == "addTodoButton";
+  });
+
+  addTodoButtonNodes.forEach(node => {
+    node.addEventListener('click', () => {
+      addTodoButton = node;
+      newTodoModal.style.display = "block";
+    })
+  })
+}
+
 //event listeners for each listed project to render Todos
 const createProjectNodes = (projectListItems) => {
   const nodeArray = [...projectListItems.childNodes].filter(ele => {
@@ -57,38 +74,29 @@ const createProjectNodes = (projectListItems) => {
 
   nodeArray.forEach(node => {
     node.addEventListener('click', () => {
+      currentlyViewingAll = false;
       const project = projects.filter(project => {
         return project.name === node.outerText;
       });
 
       todoView.innerHTML = '';
       todoView.appendChild(renderTodos(project));
-      addTodoButton = document.querySelector('.addTodoButton'); //update button to be for current project
-      addTodoButton.addEventListener("click", () => {
-        newTodoModal.style.display = "block";
-      });
+      addTodoButtonUpdate();
+      updateDeleteButtons();
+      deleteProjectButtonUpdate();
     })
   })
 }
 
 //display all todos at once
 viewAllTodos.addEventListener('click', () => {
+  currentlyViewingAll = true;
   todoView.innerHTML = '';
   todoView.appendChild(renderTodos(projects));
 
-  const todoNodes = document.getElementById('todoItems');
-  const addTodoButtonNodes = [...todoNodes.childNodes].filter(ele => {
-    return ele.localName == "button";
-  });
-
-  addTodoButtonNodes.forEach(node => {
-    node.addEventListener('click', () => {
-      console.log(node);
-      addTodoButton = node;
-      newTodoModal.style.display = "block";
-    })
-  })
-
+  addTodoButtonUpdate();
+  updateDeleteButtons();
+  deleteProjectButtonUpdate();
 })
 
 //Code for the "Add Project" modal
@@ -148,11 +156,16 @@ newTodoForm.addEventListener('submit', (event) => {
 
   function postLoopRender() {
     todoView.innerHTML = '';
-    todoView.appendChild(renderTodos([currentProject])); 
-    addTodoButton = document.querySelector('.addTodoButton'); 
-    addTodoButton.addEventListener("click", () => {
-      newTodoModal.style.display = "block";
-    });
+
+    if (currentlyViewingAll){
+      todoView.appendChild(renderTodos(projects));
+    } else {
+      todoView.appendChild(renderTodos([currentProject])); 
+    }
+
+    addTodoButtonUpdate();
+    updateDeleteButtons();
+    deleteProjectButtonUpdate();
   }
 
   for (let i = 0; i < projects.length; i++) {
@@ -167,3 +180,87 @@ newTodoForm.addEventListener('submit', (event) => {
   
   resetTodoModal(); 
 })
+
+//delete button functionality
+const updateDeleteButtons = () => {
+  const deleteButtonNodes = [...document.querySelectorAll('.deleteTodoButton')];
+  let currentProject;
+  let updatedProjectTodos;
+
+  deleteButtonNodes.forEach(node => {
+    node.addEventListener('click', () => {
+      console.log(node.dataset.project);
+      for (let i = 0; i < projects.length; i++) {
+        if (projects[i].name === node.dataset.project) {
+          currentProject = projects[i];
+          updatedProjectTodos = projects[i].todoList.filter(todo => {
+            return todo.id != node.dataset.id;
+          });
+          projects[i].todoList = updatedProjectTodos;
+          updateStorage();
+          
+          todoView.innerHTML = '';
+
+          if (currentlyViewingAll){
+            todoView.appendChild(renderTodos(projects));
+          } else {
+            todoView.appendChild(renderTodos([currentProject])); 
+          }
+
+          addTodoButtonUpdate();
+          updateDeleteButtons();
+          deleteProjectButtonUpdate();
+
+          break;
+        }
+      }
+      
+    })
+  })
+}
+
+//delete project button functionality
+const deleteProjectButtonUpdate = () => {
+  let currentProject;
+  let updatedProjects;
+  const todoNodes = document.getElementById('todoItems');
+  const deleteProjectButtonNodes = [...todoNodes.childNodes].filter(ele => {
+    return ele.className == "deleteProjectButton";
+  });
+
+  deleteProjectButtonNodes.forEach(node => {
+    node.addEventListener('click', () => {
+      deleteProjectButton = node;
+      
+      for (let i = 0; i < projects.length; i++) {
+        if (projects[i].name === node.dataset.project) {
+          currentProject = projects[i];
+          updatedProjects = projects.filter(project => {
+            return project != currentProject;
+          });
+
+          projects = updatedProjects;
+          updateStorage();
+          
+          todoView.innerHTML = '';
+
+          if (currentlyViewingAll){
+            todoView.appendChild(renderTodos(projects));
+            addTodoButtonUpdate();
+            updateDeleteButtons();
+            deleteProjectButtonUpdate();
+          } else {
+            todoView.innerHTML = 'Select a Project to View'; 
+          }
+          
+          projectListContainer.innerHTML = '';
+          projectListContainer.appendChild(renderProjectList(projects));
+          projectListItems = document.getElementById('projectListItems');
+          createProjectNodes(projectListItems);
+
+          break;
+        }
+      }
+    })
+  })
+}
