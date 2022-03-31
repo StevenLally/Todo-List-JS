@@ -189,7 +189,6 @@ const updateDeleteButtons = () => {
 
   deleteButtonNodes.forEach(node => {
     node.addEventListener('click', () => {
-      console.log(node.dataset.project);
       for (let i = 0; i < projects.length; i++) {
         if (projects[i].name === node.dataset.project) {
           currentProject = projects[i];
