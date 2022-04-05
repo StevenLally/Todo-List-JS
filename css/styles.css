@@ -167,7 +167,7 @@ button:focus:not(:active) {
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 5;
-  grid-row-end:end
+  /*grid-row-end: end;*/
   height: 25px;
   width: 100px;
   text-align: center;

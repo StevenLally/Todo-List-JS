@@ -1,5 +1,8 @@
 # Todo-List-JS
 Todo List built using JS
 
-Need to add delete functionality for todos and format styles
-Want to add edit functionality later
+Still needs:
+Edit TODO functionality
+Way to mark complete and show/hide Complete Todos
+Way to sort by priority/due date/project/etc.
+Additonal styling
